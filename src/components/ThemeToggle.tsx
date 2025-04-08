@@ -1,30 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useTheme } from '@/app/theme-provider';
 
 export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
-  };
+  const { theme, setTheme } = useTheme();
 
   return (
     <button
-      onClick={toggleTheme}
-      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
       aria-label="테마 변경"
     >
-      {isDark ? (
+      {theme === 'dark' ? (
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
           <path
             fillRule="evenodd"
