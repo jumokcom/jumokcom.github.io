@@ -1,6 +1,8 @@
 ---
 title: 'Next.js로 블로그 만들기'
 date: '2024-03-26'
+category: 'development'
+tags: ['Next.js', 'TypeScript', '블로그']
 ---
 
 # Next.js로 블로그 만들기
