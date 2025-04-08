@@ -1,4 +1,4 @@
-import { getPostBySlug } from '@/lib/posts';
+import { getPostBySlug, getAllPosts } from '@/lib/posts';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import ReactMarkdown from 'react-markdown';
@@ -7,6 +7,13 @@ interface Props {
   params: {
     slug: string;
   };
+}
+
+export async function generateStaticParams() {
+  const posts = getAllPosts();
+  return posts.map((post) => ({
+    slug: post.slug,
+  }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
