@@ -1,4 +1,5 @@
 import { getPostsByTag, getAllTags } from '@/lib/tags';
+import { getAllPosts } from '@/lib/posts';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -9,7 +10,8 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  const tags = getAllTags();
+  const posts = getAllPosts();
+  const tags = getAllTags(posts);
   return tags.map((tag) => ({
     tag: tag.name,
   }));
