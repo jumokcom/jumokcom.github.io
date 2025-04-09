@@ -1,15 +1,27 @@
-'use client';
-
 import { getAllPosts } from '@/lib/posts';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Post } from '@/lib/posts';
 
-export default function SearchPage() {
+// 서버에서 데이터 가져오기
+async function getPosts(): Promise<Post[]> {
+  return getAllPosts();
+}
+
+export default async function SearchPage() {
+  const posts = await getPosts();
+
+  return <SearchClient initialPosts={posts} />;
+}
+
+// 클라이언트 컴포넌트
+'use client';
+
+function SearchClient({ initialPosts }: { initialPosts: Post[] }) {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
-  const posts = getAllPosts();
   
-  const results = posts.filter(post => 
+  const results = initialPosts.filter(post => 
     post.title.toLowerCase().includes(query.toLowerCase()) ||
     post.content.toLowerCase().includes(query.toLowerCase()) ||
     post.tags?.some(tag => tag.toLowerCase().includes(query.toLowerCase())) ||
