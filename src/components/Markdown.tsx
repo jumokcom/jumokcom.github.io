@@ -9,12 +9,13 @@ interface MarkdownProps {
 
 export default function Markdown({ content }: MarkdownProps) {
   return (
-    <ReactMarkdown
-      className="prose dark:prose-invert max-w-none"
-      remarkPlugins={[remarkGfm]}
-      rehypePlugins={[rehypeRaw, rehypeSanitize]}
-    >
-      {content}
-    </ReactMarkdown>
+    <div className="prose dark:prose-invert max-w-none">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw, rehypeSanitize]}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
   );
 } 
