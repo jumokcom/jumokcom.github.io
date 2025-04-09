@@ -1,12 +1,12 @@
+'use client';
+
 import { getAllPosts } from '@/lib/posts';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
-export default function SearchPage({
-  searchParams,
-}: {
-  searchParams: { q: string };
-}) {
-  const query = searchParams.q || '';
+export default function SearchPage() {
+  const searchParams = useSearchParams();
+  const query = searchParams.get('q') || '';
   const posts = getAllPosts();
   
   const results = posts.filter(post => 
