@@ -81,6 +81,10 @@
   .text-primary {
     color: hsl(var(--primary));
   }
+
+  .text-primary\/80 {
+    color: hsl(var(--primary) / 0.8);
+  }
 }
 
 @layer components {
