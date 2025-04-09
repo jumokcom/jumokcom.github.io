@@ -24,24 +24,28 @@ export function SearchClient({ initialPosts }: { initialPosts: Post[] }) {
       {results.length > 0 ? (
         <ul className="space-y-6">
           {results.map(post => (
-            <li key={post.slug} className="border-b pb-6">
+            <li key={post.slug} className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               <Link
                 href={`/posts/${post.slug}`}
-                className="block hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                className="block p-6 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
                 <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
                 {post.excerpt && (
-                  <p className="text-gray-600 dark:text-gray-400 mb-2">
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">
                     {post.excerpt}
                   </p>
                 )}
-                <div className="flex items-center text-sm text-gray-500">
-                  <time>{post.date}</time>
+                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                  <time className="border rounded px-2 py-1">{post.date}</time>
                   {post.category && (
-                    <>
-                      <span className="mx-2">•</span>
-                      <span>{post.category}</span>
-                    </>
+                    <span className="border rounded px-2 py-1">{post.category}</span>
+                  )}
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {post.tags.map(tag => (
+                        <span key={tag} className="border rounded px-2 py-1">#{tag}</span>
+                      ))}
+                    </div>
                   )}
                 </div>
               </Link>
@@ -49,7 +53,7 @@ export function SearchClient({ initialPosts }: { initialPosts: Post[] }) {
           ))}
         </ul>
       ) : (
-        <p className="text-center text-gray-600 dark:text-gray-400 py-8">
+        <p className="text-center text-gray-600 dark:text-gray-400 py-8 border rounded-lg">
           검색 결과가 없습니다.
         </p>
       )}
