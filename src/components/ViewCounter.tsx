@@ -1,21 +1,5 @@
-import redis from '@/lib/redis';
+'use client';
 
-async function getViews(slug: string): Promise<number> {
-  try {
-    const views = await redis.get(`views:${slug}`);
-    return views ? parseInt(views, 10) : 0;
-  } catch (error) {
-    console.error('Error getting view count:', error);
-    return 0;
-  }
-}
-
-export default async function ViewCounter({ slug }: { slug: string }) {
-  const views = await getViews(slug);
-
-  return (
-    <span className="text-sm text-gray-500 dark:text-gray-400">
-      {views.toLocaleString()}회 조회
-    </span>
-  );
+export default function ViewCounter({ slug }: { slug: string }) {
+  return null; // 정적 사이트에서는 조회수 기능을 제공하지 않습니다
 } 
