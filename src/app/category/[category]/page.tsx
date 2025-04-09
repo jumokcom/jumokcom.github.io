@@ -1,5 +1,6 @@
-import { getPostsByCategory, getAllCategories } from '@/lib/categories';
-import Link from 'next/link';
+import { getAllPosts } from '@/lib/posts';
+import { CATEGORIES } from '@/interfaces/category';
+import PostCard from '@/components/PostCard';
 import { notFound } from 'next/navigation';
 
 interface Props {
@@ -9,59 +10,48 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  const categories = getAllCategories();
-  return categories.map((category) => ({
-    category: category.name,
+  return CATEGORIES.map((category) => ({
+    category: category.slug,
   }));
 }
 
 export default function CategoryPage({ params }: Props) {
   const decodedCategory = decodeURIComponent(params.category);
-  const posts = getPostsByCategory(decodedCategory);
-
-  if (posts.length === 0) {
+  const category = CATEGORIES.find(c => c.slug === decodedCategory);
+  
+  if (!category) {
     notFound();
   }
+
+  const posts = getAllPosts().filter(post => post.category?.toLowerCase() === category.name.toLowerCase());
 
   return (
     <div className="space-y-8">
       <header className="mb-8">
         <h1 className="text-3xl font-bold">
-          카테고리: {decodedCategory}
+          {category.name}
           <span className="ml-2 text-xl text-gray-500 dark:text-gray-400">
             ({posts.length})
           </span>
         </h1>
+        {category.description && (
+          <p className="mt-2 text-gray-600 dark:text-gray-300">
+            {category.description}
+          </p>
+        )}
       </header>
 
       <div className="grid gap-8 md:grid-cols-2">
         {posts.map(post => (
-          <article
-            key={post.slug}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-          >
-            <Link href={`/posts/${post.slug}`}>
-              <div className="p-6">
-                <h2 className="text-xl font-semibold mb-2 hover:text-blue-600 dark:hover:text-blue-400">
-                  {post.title}
-                </h2>
-                <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                  {post.excerpt}
-                </p>
-                <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                  <time dateTime={post.date}>
-                    {new Date(post.date).toLocaleDateString('ko-KR', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </time>
-                </div>
-              </div>
-            </Link>
-          </article>
+          <PostCard key={post.slug} post={post} />
         ))}
       </div>
+
+      {posts.length === 0 && (
+        <p className="text-center text-gray-600 dark:text-gray-400">
+          아직 작성된 게시물이 없습니다.
+        </p>
+      )}
     </div>
   );
 } 

@@ -1,4 +1,11 @@
+import { getAllPosts } from '@/lib/posts';
+import PostCard from '@/components/PostCard';
+import { CATEGORIES } from '@/interfaces/category';
+import Link from 'next/link';
+
 export default function Home() {
+  const posts = getAllPosts();
+
   return (
     <div className="space-y-8">
       <section className="prose dark:prose-invert lg:prose-xl">
@@ -12,37 +19,25 @@ export default function Home() {
       <section className="mt-12">
         <h2 className="text-2xl font-bold mb-6">최근 포스트</h2>
         <div className="grid gap-6 md:grid-cols-2">
-          <article className="rounded-lg border dark:border-gray-700 p-6 hover:shadow-lg transition-shadow">
-            <h3 className="text-xl font-semibold mb-2">
-              <a href="/posts/first-post" className="hover:text-blue-600 dark:hover:text-blue-400">
-                Next.js로 블로그 만들기
-              </a>
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Next.js와 TypeScript를 사용하여 개발 블로그를 만드는 과정을 공유합니다.
-            </p>
-            <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-              <span>2024년 3월 26일</span>
-              <span className="mx-2">·</span>
-              <span>개발</span>
-            </div>
-          </article>
+          {posts.slice(0, 4).map(post => (
+            <PostCard key={post.slug} post={post} />
+          ))}
         </div>
       </section>
 
       <section className="mt-12">
         <h2 className="text-2xl font-bold mb-6">카테고리</h2>
         <div className="flex flex-wrap gap-4">
-          <a href="/category/development" 
-             className="px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-100 
-                      hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
-            개발 (1)
-          </a>
-          <a href="/category/web" 
-             className="px-4 py-2 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-100 
-                      hover:bg-green-200 dark:hover:bg-green-800 transition-colors">
-            웹 (1)
-          </a>
+          {CATEGORIES.map(category => (
+            <Link
+              key={category.slug}
+              href={`/category/${category.slug}`}
+              className="px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-100 
+                       hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+            >
+              {category.name}
+            </Link>
+          ))}
         </div>
       </section>
     </div>

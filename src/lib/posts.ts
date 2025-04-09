@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { Post } from '@/interfaces/post';
 
 const postsDirectory = path.join(process.cwd(), 'src/posts');
 
@@ -62,4 +63,14 @@ export function getPostBySlug(slug: string): Post | null {
   } catch (error) {
     return null;
   }
+}
+
+export function getAdjacentPosts(currentSlug: string): { prevPost: Post | null; nextPost: Post | null } {
+  const posts = getAllPosts();
+  const currentIndex = posts.findIndex(post => post.slug === currentSlug);
+  
+  return {
+    prevPost: currentIndex > 0 ? posts[currentIndex - 1] : null,
+    nextPost: currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null,
+  };
 } 

@@ -4,10 +4,6 @@ export interface Post {
   date: string;
   content: string;
   excerpt?: string;
-  coverImage?: string;
+  category?: string;
   tags?: string[];
-  author?: {
-    name: string;
-    picture?: string;
-  };
 } 
