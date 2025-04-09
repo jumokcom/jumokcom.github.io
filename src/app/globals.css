@@ -61,6 +61,14 @@
   .text-foreground {
     color: hsl(var(--foreground));
   }
+
+  .bg-muted {
+    background-color: hsl(var(--muted));
+  }
+
+  .text-muted-foreground {
+    color: hsl(var(--muted-foreground));
+  }
 }
 
 @layer base {
