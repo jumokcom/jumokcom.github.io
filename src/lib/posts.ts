@@ -1,11 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { Post } from '@/interfaces/post';
 
-const postsDirectory = path.join(process.cwd(), 'src/posts');
+const postsDirectory = path.join(process.cwd(), '_posts');
 
-export interface Post {
+export type Post = {
   slug: string;
   title: string;
   date: string;
@@ -13,20 +12,39 @@ export interface Post {
   excerpt?: string;
   category?: string;
   tags?: string[];
-}
+};
+
+let postsCache: Post[] | null = null;
 
 export function getAllPosts(): Post[] {
-  // posts 디렉토리가 없으면 생성
-  if (!fs.existsSync(postsDirectory)) {
-    fs.mkdirSync(postsDirectory, { recursive: true });
+  if (postsCache) {
+    return postsCache;
   }
 
-  const fileNames = fs.readdirSync(postsDirectory);
-  const allPosts = fileNames
-    .filter(fileName => fileName.endsWith('.md'))
-    .map(fileName => {
-      const slug = fileName.replace(/\.md$/, '');
-      const fullPath = path.join(postsDirectory, fileName);
+  // 서버 사이드에서만 실행
+  if (typeof window === 'undefined') {
+    const fileNames = fs.readdirSync(postsDirectory);
+    const posts = fileNames
+      .filter(fileName => fileName.endsWith('.md'))
+      .map(fileName => {
+        const slug = fileName.replace(/\.md$/, '');
+        return getPostBySlug(slug);
+      })
+      .filter((post): post is Post => post !== null)
+      .sort((a, b) => (a.date > b.date ? -1 : 1));
+
+    postsCache = posts;
+    return posts;
+  }
+
+  return [];
+}
+
+export function getPostBySlug(slug: string): Post | null {
+  // 서버 사이드에서만 실행
+  if (typeof window === 'undefined') {
+    try {
+      const fullPath = path.join(postsDirectory, `${slug}.md`);
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       const { data, content } = matter(fileContents);
 
@@ -35,40 +53,23 @@ export function getAllPosts(): Post[] {
         title: data.title,
         date: data.date,
         content,
-        excerpt: data.excerpt || content.slice(0, 200) + '...',
+        excerpt: data.excerpt,
         category: data.category,
-        tags: data.tags || [],
+        tags: data.tags,
       };
-    });
-
-  // 날짜순으로 정렬
-  return allPosts.sort((a, b) => (a.date < b.date ? 1 : -1));
-}
-
-export function getPostBySlug(slug: string): Post | null {
-  try {
-    const fullPath = path.join(postsDirectory, `${slug}.md`);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-    const { data, content } = matter(fileContents);
-
-    return {
-      slug,
-      title: data.title,
-      date: data.date,
-      content,
-      excerpt: data.excerpt || content.slice(0, 200) + '...',
-      category: data.category,
-      tags: data.tags || [],
-    };
-  } catch (error) {
-    return null;
+    } catch (error) {
+      console.error(`Error reading post ${slug}:`, error);
+      return null;
+    }
   }
+
+  return null;
 }
 
-export function getAdjacentPosts(currentSlug: string): { prevPost: Post | null; nextPost: Post | null } {
+export function getAdjacentPosts(currentSlug: string) {
   const posts = getAllPosts();
   const currentIndex = posts.findIndex(post => post.slug === currentSlug);
-  
+
   return {
     prevPost: currentIndex > 0 ? posts[currentIndex - 1] : null,
     nextPost: currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null,
