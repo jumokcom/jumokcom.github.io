@@ -1,8 +1,31 @@
 import { getAllPosts } from '@/lib/posts';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 
-export default async function CategoryPage({ params }: { params: { category: string } }) {
+interface Props {
+  params: {
+    category: string;
+  };
+}
+
+export async function generateStaticParams() {
+  const posts = await getAllPosts();
+  const categories = Array.from(new Set(posts.map(post => post.category).filter(Boolean)));
+  
+  return categories.map((category) => ({
+    category: category,
+  }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  return {
+    title: `${params.category} 카테고리의 글 목록`,
+    description: `${params.category} 카테고리에 속한 블로그 포스트 목록입니다.`,
+  };
+}
+
+export default async function CategoryPage({ params }: Props) {
   const posts = await getAllPosts();
   const categoryPosts = posts.filter(post => post.category === params.category);
 
