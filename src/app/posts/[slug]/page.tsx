@@ -40,58 +40,44 @@ export default function PostPage({ params }: Props) {
   const url = `${process.env.NEXT_PUBLIC_SITE_URL}/posts/${params.slug}`;
 
   return (
-    <div className="max-w-6xl mx-auto flex">
-      <article className="flex-1 max-w-4xl">
-        <header className="mb-8">
+    <article className="container mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="border rounded-lg p-8 mb-8 bg-white dark:bg-gray-800 shadow-sm">
           <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-              <time dateTime={post.date}>
-                {new Date(post.date).toLocaleDateString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </time>
-              {post.category && (
-                <Link
-                  href={`/category/${post.category.toLowerCase()}`}
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  {post.category}
-                </Link>
-              )}
-            </div>
-            <div className="flex items-center gap-4 mb-8">
-              <ShareButtons url={url} title={post.title} />
-              <ViewCounter slug={post.slug} />
-            </div>
+          
+          <div className="flex flex-wrap items-center gap-4 mb-8 text-sm text-gray-500">
+            <time className="border rounded px-2 py-1">{post.date}</time>
+            {post.category && (
+              <Link 
+                href={`/categories/${post.category}`}
+                className="border rounded px-2 py-1 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                {post.category}
+              </Link>
+            )}
+            {post.tags && post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {post.tags.map(tag => (
+                  <span key={tag} className="border rounded px-2 py-1">#{tag}</span>
+                ))}
+              </div>
+            )}
           </div>
-        </header>
 
-        <div className="prose dark:prose-invert max-w-none">
-          <Markdown content={post.content} />
+          <div className="prose dark:prose-invert max-w-none">
+            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          </div>
         </div>
 
-        {post.tags && post.tags.length > 0 && (
-          <div className="mt-8 pt-4 border-t dark:border-gray-700">
-            <div className="flex flex-wrap gap-2">
-              {post.tags.map(tag => (
-                <Link
-                  key={tag}
-                  href={`/tag/${tag}`}
-                  className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                >
-                  #{tag}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <PostNavigation prevPost={prevPost} nextPost={nextPost} />
-      </article>
-      <TableOfContents />
-    </div>
+        <div className="flex justify-center">
+          <Link
+            href="/"
+            className="border rounded-lg px-6 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            ← 목록으로 돌아가기
+          </Link>
+        </div>
+      </div>
+    </article>
   );
 } 
