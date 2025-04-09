@@ -77,6 +77,10 @@
   .border-border {
     border-color: hsl(var(--border));
   }
+
+  .text-primary {
+    color: hsl(var(--primary));
+  }
 }
 
 @layer components {
