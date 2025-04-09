@@ -47,21 +47,17 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
   }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground min-h-screen;
+  }
 }
 
-@layer components {
-  .border-border {
-    border-color: hsl(var(--border));
-  }
-  
-  .bg-background {
-    background-color: hsl(var(--background));
-  }
-  
-  .text-foreground {
-    color: hsl(var(--foreground));
-  }
-
+@layer utilities {
   .bg-muted {
     background-color: hsl(var(--muted));
   }
@@ -69,16 +65,21 @@
   .text-muted-foreground {
     color: hsl(var(--muted-foreground));
   }
+
+  .bg-background {
+    background-color: hsl(var(--background));
+  }
+
+  .text-foreground {
+    color: hsl(var(--foreground));
+  }
+
+  .border-border {
+    border-color: hsl(var(--border));
+  }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  
+@layer components {
   .prose {
     @apply max-w-none;
   }
@@ -102,10 +103,4 @@
   .prose img {
     @apply rounded-lg;
   }
-}
-
-body {
-  min-height: 100vh;
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
 } 
