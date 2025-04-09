@@ -7,6 +7,7 @@ import TableOfContents from '@/components/TableOfContents';
 import PostNavigation from '@/components/PostNavigation';
 import ShareButtons from '@/components/ShareButtons';
 import ViewCounter from '@/components/ViewCounter';
+import ViewIncrement from '@/components/ViewIncrement';
 
 interface Props {
   params: {

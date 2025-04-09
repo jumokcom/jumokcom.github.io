@@ -1,14 +1,21 @@
 import { NextResponse } from 'next/server';
-import { kv } from '@vercel/kv';
+import redis from '@/lib/redis';
 
 export async function POST(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
   const slug = params.slug;
-  const views = await kv.incr(`views:${slug}`);
 
-  return NextResponse.json({ views });
+  try {
+    await redis.incr(`views:${slug}`);
+    const views = await redis.get(`views:${slug}`);
+    
+    return NextResponse.json({ views: parseInt(views || '0', 10) });
+  } catch (error) {
+    console.error('Error incrementing view count:', error);
+    return NextResponse.json({ error: 'Failed to increment view count' }, { status: 500 });
+  }
 }
 
 export async function GET(
@@ -16,7 +23,12 @@ export async function GET(
   { params }: { params: { slug: string } }
 ) {
   const slug = params.slug;
-  const views = await kv.get<number>(`views:${slug}`) || 0;
 
-  return NextResponse.json({ views });
+  try {
+    const views = await redis.get(`views:${slug}`);
+    return NextResponse.json({ views: parseInt(views || '0', 10) });
+  } catch (error) {
+    console.error('Error getting view count:', error);
+    return NextResponse.json({ error: 'Failed to get view count' }, { status: 500 });
+  }
 } 

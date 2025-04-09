@@ -1,25 +1,17 @@
-'use client';
+import redis from '@/lib/redis';
 
-import { useEffect, useState } from 'react';
-import { getViewCount, incrementViewCount } from '@/lib/views';
+async function getViews(slug: string): Promise<number> {
+  try {
+    const views = await redis.get(`views:${slug}`);
+    return views ? parseInt(views, 10) : 0;
+  } catch (error) {
+    console.error('Error getting view count:', error);
+    return 0;
+  }
+}
 
-export default function ViewCounter({ slug }: { slug: string }) {
-  const [views, setViews] = useState<number>(0);
-
-  useEffect(() => {
-    const fetchViews = async () => {
-      try {
-        const initialViews = await getViewCount(slug);
-        setViews(initialViews);
-        await incrementViewCount(slug);
-        setViews(prev => prev + 1);
-      } catch (error) {
-        console.error('Error fetching views:', error);
-      }
-    };
-
-    fetchViews();
-  }, [slug]);
+export default async function ViewCounter({ slug }: { slug: string }) {
+  const views = await getViews(slug);
 
   return (
     <span className="text-sm text-gray-500 dark:text-gray-400">
